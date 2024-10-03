@@ -17,7 +17,8 @@ defmodule PhxSimpleTableWeb.Router do
   scope "/", PhxSimpleTableWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    # get "/", PageController, :home
+    live "/", TableLive.Show, :show
   end
 
   # Other scopes may use custom stacks.

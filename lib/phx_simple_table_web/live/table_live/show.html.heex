@@ -1,0 +1,12 @@
+<h1> Table Data</h1>
+
+<table>
+<tbody>
+<%= for table_row <- @table_list do %>
+<tr>
+<td><%= table_row.id %></td>
+<td><%= table_row.name %></td>
+</tr>
+<% end %>
+</tbody>
+</table>
