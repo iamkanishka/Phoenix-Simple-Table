@@ -4,6 +4,9 @@ defmodule PhxSimpleTable.Schema.TableSchema do
 
   schema "table_data" do
     field :name, :string
+    field :gender, :string
+    field :weight, :integer
+
     timestamps()
   end
 
