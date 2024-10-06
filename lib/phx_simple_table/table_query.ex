@@ -1,27 +1,24 @@
 defmodule PhxSimpleTable.TableQuery do
   alias PhxSimpleTable.Schema.TableSchema
 
+  alias PhxSimpleTableWeb.Repo
   import Ecto.Query, warn: false
 
-  alias PhxSimpleTable.Repo
-  alias PhxSimpleTable.Schema.TableSchema
-
-  @doc """
-  Fetch table Data
-  """
   def list_table_data(opts) do
-    # Get all Data
-    # Repo.all(TableSchema)
+    # Fetch all Table Data
+    #  Repo.all(TableSchema)
 
-    # get Sorted Data
+    # Fetch Table Data with Sort
+
     from(m in TableSchema)
     |> sort(opts)
-    |> Repo.all()
+    |> Rep.all()
   end
 
   defp sort(query, %{sort_by: sort_by, sort_dir: sort_dir})
        when sort_by in [:id, :name, :gender, :weight] and
-              sort_dir in [:asc, :dec] do
+              sort_dir in [:asc, :desc] do
+                IO.inspect(sort_by, sort_dir, lablel: "orderby")
     order_by(query, {^sort_by, ^sort_dir})
   end
 
