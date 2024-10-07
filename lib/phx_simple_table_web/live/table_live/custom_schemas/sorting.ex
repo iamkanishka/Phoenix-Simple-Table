@@ -20,4 +20,5 @@ defmodule PhxSimpleTableWeb.TableLive.CustomSchemas.Sorting do
   end
 
   def default_values(overrides \\ %{}), do: Map.merge(@default_values, overrides)
+
 end
