@@ -9,7 +9,7 @@
             module={PhxSimpleTableWeb.TableLive.Components.SortingComponent}
             id="sorting-id"
             key={:id}
-            sorting={%{sort_by: :id, sort_dir: :asc}}
+            sorting={@sorting}
           >
           </.live_component>
         </th>
@@ -19,7 +19,7 @@
             module={PhxSimpleTableWeb.TableLive.Components.SortingComponent}
             id="sorting-name"
             key={:name}
-            sorting={%{sort_by: :name, sort_dir: :asc}}
+            sorting={@sorting}
           >
           </.live_component>
         </th>
@@ -29,7 +29,7 @@
             module={PhxSimpleTableWeb.TableLive.Components.SortingComponent}
             id="sorting-weight"
             key={:weight}
-            sorting={%{sort_by: :weight, sort_dir: :asc}}
+            sorting={@sorting}
           >
           </.live_component>
         </th>
@@ -39,7 +39,7 @@
             module={PhxSimpleTableWeb.TableLive.Components.SortingComponent}
             id="sorting-gender"
             key={:gender}
-            sorting={%{sort_by: :gender, sort_dir: :asc}}
+            sorting={@sorting}
           >
           </.live_component>
         </th>

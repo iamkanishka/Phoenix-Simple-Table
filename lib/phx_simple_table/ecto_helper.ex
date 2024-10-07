@@ -6,6 +6,7 @@ defmodule PhxSimpleTable.EctoHelper do
     # As suggested by Benjamin Milde here: https://github.com/PJUllrich/pragprog-book-tables/issues/2
     # Thank you, Benjamin!
 
-    {:parameterized, Ecto.Enum, Ecto.Enum.init(values: values)}
+    # {:parameterized, Ecto.Enum, Ecto.Enum.init(values: values)}
+    Ecto.ParameterizedType.init(Ecto.Enum, values: values)
   end
 end
