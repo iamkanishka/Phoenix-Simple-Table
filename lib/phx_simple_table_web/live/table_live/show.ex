@@ -17,8 +17,6 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
   end
 
   def handle_info({:update, opts}, socket) do
-    Logger.info("handling query")
-
     {:noreply,
      push_navigate(socket,
        to: "/?sort_by=#{opts[:sort_by]}&sort_dir=#{opts[:sort_dir]}",
@@ -30,14 +28,13 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
     with {:ok, sorting_opts} <- Sorting.parse(params) do
       assign_sorting(socket, sorting_opts)
     else
-      () ->
-        _error
+      _error ->
         assign_sorting(socket)
     end
   end
 
   defp assign_sorting(socket, overrides \\ %{}) do
-    opts = Merge.map(Sorting.default_values(), overrides)
+    opts = Map.merge(Sorting.default_values(), overrides)
     assign(socket, :sorting, opts)
   end
 

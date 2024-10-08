@@ -22,9 +22,9 @@ defmodule PhxSimpleTableWeb.TableLive.Components.SortingComponent do
     {:noreply, socket}
   end
 
-  def chevron(%{sorting: %{sort_by: sort_by, sort_dir: sort_dir}, key: key})
+  def chevron(%{sort_by: sort_by, sort_dir: sort_dir}, key)
       when sort_by == key do
-      if sort_dir == :asc, do: "⇧", else: "⇩"
+     if sort_dir == :asc, do: "⇧", else: "⇩"
   end
 
   def chevron(_opts, _key), do: ""
