@@ -13,6 +13,7 @@ defmodule PhxSimpleTable.TableQuery do
     # Fetch Table Data with Sort
 
     from(m in TableSchema)
+    |> filter(opts)
     |> sort(opts)
     |> Repo.all()
   end
@@ -20,43 +21,39 @@ defmodule PhxSimpleTable.TableQuery do
   defp sort(query, %{sort_by: sort_by, sort_dir: sort_dir})
        when sort_by in [:id, :name, :gender, :weight] and
               sort_dir in [:asc, :desc] do
-      order_by(query, { ^sort_dir, ^sort_by})
+    order_by(query, {^sort_dir, ^sort_by})
   end
 
-
-
-  def filter(query, opts) do
-      # where(query, (query.name ilike ^opts.name) or (query.name == ^opts.name))
-       where(query, ilike(query.name,  ^opts.name))
-
-      where(query, query.gender == ^opts.gender)
-      where(query, query.weight >= ^opts.weight)
-      where(query, query.id >= ^opts.id)
-
-
+  defp filter(query, opts) do
+    query
+    |> filter_by_id(opts)
+    |> filter_by_name(opts)
+    |> filter_by_gender(opts)
+    |> filter_by_weight(opts)
   end
 
-  # def filter_users(opts \\ %{}) do
-  #   # Define a starting query
-  #   query = from user in TableSchema,
-  #     where: true  # Starting condition
+  defp filter_by_id(query, %{id: id}) when is_integer(id) do
+    where(query, id: ^id)
+  end
 
-  #   # Build a dynamic condition based on opts
-  #   conditions = Enum.reduce(opts, query, fn
-  #     {key, value} when value != nil ->
-  #       where(query, user[:key] == ^value)
-  #     _ ->
-  #       query
-  #   end)
+  defp filter_by_gender(query, %{gender: gender}) when is_binary(gender) and gender != "" do
+    where(query, id: ^gender)
+  end
 
-  #   from user in conditions,
-  #     select: user
-  # end
+  defp filter_by_weight(query, %{id: weight}) when is_integer(weight) do
+    where(query, id: ^weight)
+  end
 
+  defp filter_by_name(query, %{name: name})
+       when is_binary(name) and name != "" do
+    query_string = "%#{name}%"
+    where(query, [m], ilike(m.name, ^query_string))
+  end
 
-
+  defp filter_by_id(query, _opts), do: query
+  defp filter_by_name(query, _opts), do: query
+  defp filter_by_gender(query, _opts), do: query
+  defp filter_by_weight(query, _opts), do: query
 
   defp sort(query, _opts), do: query
-  defp filter(query, _opts), do: query
-
 end

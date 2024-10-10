@@ -10,9 +10,9 @@ defmodule PhxSimpleTable.Schema.TableSchema do
     timestamps()
   end
 
-  def changeset(table_row, attrs) do
+  def changeset(table_row, attrs \\ %{}) do
     table_row
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :gender, :weight])
+    |> validate_required([:name, :gender, :weight])
   end
 end
