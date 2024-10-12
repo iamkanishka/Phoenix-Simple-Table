@@ -1,6 +1,9 @@
 defmodule PhxSimpleTableWeb.TableLive.Show do
+  alias PhxSimpleTableWeb.TableLive.CustomSchemas.Filtering
+  alias PhxSimpleTable.Schema.TableSchema
   alias PhxSimpleTable.TableQuery
   alias PhxSimpleTableWeb.TableLive.CustomSchemas.Sorting
+
   use PhxSimpleTableWeb, :live_view
 
   @impl true
@@ -10,6 +13,7 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
   def handle_params(params, _uri, socket) do
     socket =
       socket
+      |> assign(:filter, %TableSchema{})
       |> parse_params(params)
       |> assign_table_list()
 
@@ -29,7 +33,8 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
       assign_sorting(socket, sorting_opts)
     else
       _error ->
-        assign_sorting(socket)
+        socket
+        |> assign_sorting()
     end
   end
 
