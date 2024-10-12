@@ -6,7 +6,6 @@ defmodule PhxSimpleTableWeb.TableLive.CustomSchemas.Filtering do
     name: :string,
     gender: :string,
     weight: :integer
-
   }
   @default_values %{
     id: nil,
@@ -22,6 +21,7 @@ defmodule PhxSimpleTableWeb.TableLive.CustomSchemas.Filtering do
     {@default_values, @fields}
     |> cast(params, Map.keys(@fields))
     |> validate_number(:id, greater_than_or_equal_to: 0)
+    |> validate_number(:weight, greater_than_or_equal_to: 0)
     |> apply_action(:insert)
   end
 

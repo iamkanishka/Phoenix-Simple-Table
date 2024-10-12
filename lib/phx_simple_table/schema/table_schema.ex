@@ -10,9 +10,16 @@ defmodule PhxSimpleTable.Schema.TableSchema do
     timestamps()
   end
 
-  def changeset(table_row, attrs \\ %{}) do
-    table_row
-    |> cast(attrs, [:name, :gender, :weight])
-    |> validate_required([:name, :gender, :weight])
+  @impl true
+  def changeset(table_map, attrs \\ %{}) do
+    IO.inspect(table_map, label: "table map")
+    IO.inspect(attrs, label: "attrs")
+
+    table_map
+    |> cast(attrs, [:id, :name, :gender, :weight])
+    |> validate_required([])
+    |> validate_number(:id, greater_than_or_equal_to: 0)
+    |> validate_number(:weight, greater_than_or_equal_to: 0)
+
   end
 end

@@ -8,7 +8,8 @@ defmodule PhxSimpleTableWeb.TableLive.Components.FilterComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <.simple_form for={@form} id="filter-form" phx-target={@myself} phx-submit="search" as="filter">
+      <.simple_form for={@form} id="filter-form" phx-target={@myself} phx-submit="search"
+      phx-change="validate">
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4">
           <.input field={@form[:id]} type="number" label="ID" />
           <.input field={@form[:name]} type="text" label="Name" />
@@ -25,13 +26,50 @@ defmodule PhxSimpleTableWeb.TableLive.Components.FilterComponent do
   end
 
   @impl true
-  def update(assigns, socket) do
-    Logger.info("State initiated")
-    table_changeset = TableSchema.changeset(%TableSchema{})
+  def update(%{filter: filter} = assigns, socket) do
+    filter_changeset = TableSchema.changeset(filter)
 
-    {:ok,
-     socket
-     |> assign_form(table_changeset)}
+    socket =
+      socket
+      |> assign(assigns)
+      |> assign_form(filter_changeset)
+
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_event("validate", %{"table_schema" => filter_params}, socket) do
+    filter_changeset =
+      socket.assigns.filter
+      |> TableSchema.changeset(filter_params)
+      |> Map.put(:action, :validate)
+
+    {:noreply, assign_form(socket, filter_changeset)}
+  end
+
+  @impl true
+  def handle_event("search", %{"table_schema" => filter_params}, socket) do
+     IO.inspect(filter_params, label: "product params")
+    IO.inspect(socket.assigns.filter, label: "socket.assigns.product")
+
+    #  case Filtering.parse(filter_params) do
+     case TableSchema.changeset(socket.assigns.filter, filter_params ) do
+
+      {:ok, filter_opts} ->
+        IO.inspect(filter_opts, label: "filter_opts")
+        send(self(), {:update, filter_opts})
+        {:noreply, socket}
+
+      {:error, %Ecto.Changeset{} = filter_changeset} ->
+        IO.inspect(filter_changeset, label: "line 70 error")
+        {:noreply, assign_form(socket, filter_changeset)}
+    end
+
+    {:noreply, socket}
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 
   #   @impl true
@@ -46,38 +84,4 @@ defmodule PhxSimpleTableWeb.TableLive.Components.FilterComponent do
 
   #     {:noreply, socket}
   #   end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
-  end
-
-  @impl true
-  def handle_event(
-        "search",
-        %{
-          "table_schema" => %{"gender" => gender, "id" => id, "name" => name, "weight" => weight}
-        } = opts,
-        socket
-      ) do
-    # case Filtering.parse(filter) do
-    #   {:ok, opts} ->
-    #     send(self(), {:update, opts})
-    #     {:noreply, socket}
-
-    #   {:error, changeset} ->
-    #     {:noreply, assign(socket, :changeset, changeset)}
-    # end
-
-    IO.inspect(opts, label: "opts")
-    IO.inspect(opts["table_schema"], label: "opts")
-
-
-
-    IO.inspect(gender, label: "gender")
-    IO.inspect(id, label: "id")
-    IO.inspect(name, label: "name")
-    IO.inspect(weight, label: "weight")
-
-    {:noreply, socket}
-  end
 end
