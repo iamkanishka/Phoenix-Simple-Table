@@ -21,19 +21,13 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
 
   def handle_info({:update, opts}, socket) do
     params = merge_and_sanitize_params(socket, opts)
-    IO.inspect(params, label: "parmasn handle info")
     query_string = "/?" <> URI.encode_query(params)
-
-    IO.inspect(query_string)
-
 
     {:noreply,
      push_navigate(socket,
        to: query_string,
        replace: true
      )}
-
-    #  {:noreply, socket}
   end
 
   defp parse_params(socket, params) do
@@ -65,7 +59,6 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
 
   defp assign_table_list(socket) do
     params = merge_and_sanitize_params(socket)
-    IO.inspect(params, label: "merge_and_sanitize_params ")
     assign(socket, :table_list, TableQuery.list_table_data(params))
   end
 
@@ -78,9 +71,5 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
     |> Map.merge(overrides)
     |> Enum.reject(fn {_key, value} -> is_nil(value) end)
     |> Map.new()
-
   end
-
-
-
 end

@@ -12,9 +12,6 @@ defmodule PhxSimpleTable.Schema.TableSchema do
 
   @impl true
   def changeset(table_map, attrs \\ %{}) do
-    IO.inspect(table_map, label: "table map")
-    IO.inspect(attrs, label: "attrs")
-
     table_map
     |> cast(attrs, [:id, :name, :gender, :weight])
     |> validate_required([])
