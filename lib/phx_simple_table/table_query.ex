@@ -37,11 +37,11 @@ defmodule PhxSimpleTable.TableQuery do
   end
 
   defp filter_by_gender(query, %{gender: gender}) when is_binary(gender) and gender != "" do
-    where(query, id: ^gender)
+    where(query, gender: ^gender)
   end
 
-  defp filter_by_weight(query, %{id: weight}) when is_integer(weight) do
-    where(query, id: ^weight)
+  defp filter_by_weight(query, %{weight: weight}) when is_integer(weight) do
+    where(query, weight: ^weight)
   end
 
   defp filter_by_name(query, %{name: name})

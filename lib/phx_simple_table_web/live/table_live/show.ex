@@ -13,7 +13,6 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
   def handle_params(params, _uri, socket) do
     socket =
       socket
-      |> assign(:filter, %TableSchema{})
       |> parse_params(params)
       |> assign_table_list()
 
@@ -21,21 +20,42 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
   end
 
   def handle_info({:update, opts}, socket) do
+    params = merge_and_sanitize_params(socket, opts)
+    IO.inspect(params, label: "parmasn handle info")
+    query_string = "/?" <> URI.encode_query(params)
+
+    IO.inspect(query_string)
+
+
     {:noreply,
      push_navigate(socket,
-       to: "/?sort_by=#{opts[:sort_by]}&sort_dir=#{opts[:sort_dir]}",
+       to: query_string,
        replace: true
      )}
+
+    #  {:noreply, socket}
   end
 
   defp parse_params(socket, params) do
-    with {:ok, sorting_opts} <- Sorting.parse(params) do
-      assign_sorting(socket, sorting_opts)
+    with {:ok, sorting_opts} <- Sorting.parse(params),
+         {:ok, filtering_opts} <- Filtering.parse(params) do
+      socket
+      |> assign_sorting(sorting_opts)
+      |> assign_filtering(filtering_opts)
     else
       _error ->
         socket
         |> assign_sorting()
     end
+  end
+
+  defp assign_filtering(socket, overrides \\ %{}) do
+    form_opts = Map.merge(%TableSchema{}, overrides)
+    opts = Map.merge(Filtering.default_values(), overrides)
+
+    socket
+    |> assign(:filter, form_opts)
+    |> assign(:filtering, opts)
   end
 
   defp assign_sorting(socket, overrides \\ %{}) do
@@ -44,7 +64,23 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
   end
 
   defp assign_table_list(socket) do
-    %{sorting: sorting} = socket.assigns
-    assign(socket, :table_list, TableQuery.list_table_data(sorting))
+    params = merge_and_sanitize_params(socket)
+    IO.inspect(params, label: "merge_and_sanitize_params ")
+    assign(socket, :table_list, TableQuery.list_table_data(params))
   end
+
+  defp merge_and_sanitize_params(socket, overrides \\ %{}) do
+    %{sorting: sorting, filtering: filtering} = socket.assigns
+
+    %{}
+    |> Map.merge(sorting)
+    |> Map.merge(filtering)
+    |> Map.merge(overrides)
+    |> Enum.reject(fn {_key, value} -> is_nil(value) end)
+    |> Map.new()
+
+  end
+
+
+
 end
