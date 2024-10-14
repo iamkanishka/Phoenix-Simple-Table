@@ -24,7 +24,7 @@ defmodule PhxSimpleTableWeb.TableLive.Components.SortingComponent do
 
   def chevron(%{sort_by: sort_by, sort_dir: sort_dir}, key)
       when sort_by == key do
-     if sort_dir == :asc, do: "⇧", else: "⇩"
+     if sort_dir == :asc, do: "⬆️", else: "⬇️"
   end
 
   def chevron(_opts, _key), do: ""

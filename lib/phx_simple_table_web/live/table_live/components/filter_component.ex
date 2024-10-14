@@ -13,14 +13,18 @@ defmodule PhxSimpleTableWeb.TableLive.Components.FilterComponent do
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4">
           <.input field={@form[:id]} type="number" label="ID" />
           <.input field={@form[:name]} type="text" label="Name" />
-          <.input field={@form[:gender]} type="select" label="Gender" options={["Male", "Female"]} />
+          <.input field={@form[:gender]} type="select" label="Gender" options={["Male", "Female", "Others"]} />
           <.input field={@form[:weight]} type="number" label="Weight" />
         </div>
 
         <:actions>
-          <.button phx-disable-with="Saving...">Search</.button>
+          <.button phx-disable-with="Saving..." disabled>Search</.button>
         </:actions>
+
       </.simple_form>
+
+
+
     </div>
     """
   end
@@ -43,7 +47,7 @@ defmodule PhxSimpleTableWeb.TableLive.Components.FilterComponent do
       socket.assigns.filter
       |> TableSchema.changeset(filter_params)
       |> Map.put(:action, :validate)
-
+      if
     {:noreply, assign_form(socket, filter_changeset)}
   end
 
@@ -52,8 +56,8 @@ defmodule PhxSimpleTableWeb.TableLive.Components.FilterComponent do
      IO.inspect(filter_params, label: "product params")
     IO.inspect(socket.assigns.filter, label: "socket.assigns.product")
 
-    #  case Filtering.parse(filter_params) do
-     case TableSchema.changeset(socket.assigns.filter, filter_params ) do
+      case Filtering.parse(filter_params) do
+    #  case TableSchema.changeset(socket.assigns.filter, filter_params ) do
 
       {:ok, filter_opts} ->
         IO.inspect(filter_opts, label: "filter_opts")
