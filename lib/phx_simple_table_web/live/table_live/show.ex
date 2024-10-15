@@ -1,4 +1,5 @@
 defmodule PhxSimpleTableWeb.TableLive.Show do
+  alias PhxSimpleTable.Schema.PaginationSchema
   alias PhxSimpleTableWeb.TableLive.CustomSchemas.Filtering
   alias PhxSimpleTable.Schema.TableSchema
   alias PhxSimpleTable.TableQuery
@@ -13,12 +14,14 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
   def handle_params(params, _uri, socket) do
     socket =
       socket
+      |>assign_paginaing()
       |> parse_params(params)
       |> assign_table_list()
 
     {:noreply, socket}
   end
 
+  @impl true
   def handle_info({:update, opts}, socket) do
     params = merge_and_sanitize_params(socket, opts)
     query_string = "/?" <> URI.encode_query(params)
@@ -36,12 +39,25 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
       socket
       |> assign_sorting(sorting_opts)
       |> assign_filtering(filtering_opts)
+
     else
       _error ->
         socket
         |> assign_sorting()
+        |> assign_filtering()
     end
   end
+
+
+  defp assign_paginaing(socket, overrides \\ %{}) do
+    paginate_form_opts = Map.merge(%PaginationSchema{}, overrides)
+    # opts = Map.merge(Filtering.default_values(), overrides)
+
+    socket
+    |> assign(:paginate, paginate_form_opts)
+    # |> assign(:filtering, opts)
+  end
+
 
   defp assign_filtering(socket, overrides \\ %{}) do
     form_opts = Map.merge(%TableSchema{}, overrides)

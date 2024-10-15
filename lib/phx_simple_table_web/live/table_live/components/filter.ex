@@ -22,7 +22,7 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Filter do
             field={@form[:gender]}
             type="select"
             label="Gender"
-            options={["Male", "Female", "Others"]}
+            options={["","Male", "Female", "Others"]}
           /> <.input field={@form[:weight]} type="number" label="Weight" />
         </div>
 

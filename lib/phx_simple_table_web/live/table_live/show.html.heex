@@ -5,6 +5,14 @@ module={PhxSimpleTableWeb.TableLive.Components.Filter}
 id="filter"
 filter={@filter}
 ></.live_component>
+
+<.live_component
+module={PhxSimpleTableWeb.TableLive.Components.Pagination}
+id="pagination-form"
+paginate={@paginate}
+></.live_component>
+
+
  
 <div class="relative overflow-x-auto">
   <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -78,4 +86,5 @@ filter={@filter}
     </tbody>
   </table>
 </div>
+
 
