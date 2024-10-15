@@ -1,4 +1,5 @@
 defmodule PhxSimpleTableWeb.TableLive.Show do
+  alias PhxSimpleTableWeb.TableLive.CustomSchemas.Paginating
   alias PhxSimpleTable.Schema.PaginationSchema
   alias PhxSimpleTableWeb.TableLive.CustomSchemas.Filtering
   alias PhxSimpleTable.Schema.TableSchema
@@ -14,7 +15,6 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
   def handle_params(params, _uri, socket) do
     socket =
       socket
-      |>assign_paginaing()
       |> parse_params(params)
       |> assign_table_list()
 
@@ -35,11 +35,12 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
 
   defp parse_params(socket, params) do
     with {:ok, sorting_opts} <- Sorting.parse(params),
-         {:ok, filtering_opts} <- Filtering.parse(params) do
+         {:ok, filtering_opts} <- Filtering.parse(params),
+         {:ok, paginating_opts} <- Paginating.parse(params) do
       socket
       |> assign_sorting(sorting_opts)
       |> assign_filtering(filtering_opts)
-
+      |> assign_pagination(paginating_opts)
     else
       _error ->
         socket
@@ -48,16 +49,14 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
     end
   end
 
-
-  defp assign_paginaing(socket, overrides \\ %{}) do
+  defp assign_pagination(socket, overrides \\ %{}) do
     paginate_form_opts = Map.merge(%PaginationSchema{}, overrides)
-    # opts = Map.merge(Filtering.default_values(), overrides)
+    paginating_opts = Map.merge(Filtering.default_values(), overrides)
 
     socket
     |> assign(:paginate, paginate_form_opts)
-    # |> assign(:filtering, opts)
+    |> assign(:paginating, paginating_opts)
   end
-
 
   defp assign_filtering(socket, overrides \\ %{}) do
     form_opts = Map.merge(%TableSchema{}, overrides)
@@ -75,16 +74,34 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
 
   defp assign_table_list(socket) do
     params = merge_and_sanitize_params(socket)
-    assign(socket, :table_list, TableQuery.list_table_data(params))
+
+    %{table_data: table_data, total_count: total_count} =
+      TableQuery.list_table_data_with_total_count(params)
+
+    socket
+    |> assign(:table_list, table_data)
+    |> assign_total_count(total_count)
+  end
+
+  # One way to update  a specfic key in socket
+  # defp assign_total_count(socket, total_count) do
+  #   update(socket, :pagination, fn pagination -> %{pagination | total_count: total_count} end)
+  # end
+
+  defp assign_total_count(socket, total_count) do
+    assign(socket, :pagination, total_count)
   end
 
   defp merge_and_sanitize_params(socket, overrides \\ %{}) do
-    %{sorting: sorting, filtering: filtering} = socket.assigns
+    %{sorting: sorting, filtering: filtering, paginating: paginating} = socket.assigns
 
     %{}
     |> Map.merge(sorting)
     |> Map.merge(filtering)
+    |> Map.merge(paginating)
     |> Map.merge(overrides)
+    |> Map.merge(overrides)
+    |> Map.drop([:total_count])
     |> Enum.reject(fn {_key, value} -> is_nil(value) end)
     |> Map.new()
   end

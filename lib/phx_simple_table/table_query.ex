@@ -11,11 +11,28 @@ defmodule PhxSimpleTable.TableQuery do
     #  Repo.all(TableSchema)
 
     # Fetch Table Data with Sort
+    # from(m in TableSchema)
+    # |> sort(opts)
+    # |> Repo.all()
 
+    # Fetch Table Data with Sort and Filter
     from(m in TableSchema)
     |> filter(opts)
     |> sort(opts)
     |> Repo.all()
+  end
+
+  def list_table_data_with_total_count(opts) do
+    query = from(m in TableSchema) |> filter(opts)
+    total_count = Repo.aggregate(query, :count)
+
+    result =
+      query
+      |> sort(opts)
+      |> paginate(opts)
+      |> Repo.all()
+
+    %{table_data: result, total_count: total_count}
   end
 
   defp sort(query, %{sort_by: sort_by, sort_dir: sort_dir})
@@ -56,4 +73,15 @@ defmodule PhxSimpleTable.TableQuery do
   defp filter_by_weight(query, _opts), do: query
 
   defp sort(query, _opts), do: query
+
+  defp paginate(query, %{page: page, page_size: page_size})
+       when is_integer(page) and is_integer(page_size) do
+    offset = max(page - 1, 0) * page_size
+
+    query
+    |> limit(^page_size)
+    |> offset(^offset)
+  end
+
+  defp paginate(query, _opts), do: query
 end
