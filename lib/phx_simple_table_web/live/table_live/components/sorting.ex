@@ -1,4 +1,4 @@
-defmodule PhxSimpleTableWeb.TableLive.Components.SortingComponent do
+defmodule PhxSimpleTableWeb.TableLive.Components.Sorting do
   use PhxSimpleTableWeb, :live_component
 
   @doc false

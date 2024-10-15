@@ -1,4 +1,4 @@
-defmodule PhxSimpleTableWeb.TableLive.Components.FilterComponent do
+defmodule PhxSimpleTableWeb.TableLive.Components.Filter do
   require Logger
   alias PhxSimpleTable.Schema.TableSchema
   alias PhxSimpleTableWeb.TableLive.CustomSchemas.Filtering
