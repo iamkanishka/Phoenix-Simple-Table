@@ -1,4 +1,4 @@
-defmodule PhxSimpleTableWeb.TableLive.Components.FilterComponent do
+defmodule PhxSimpleTableWeb.TableLive.Components.Filter do
   require Logger
   alias PhxSimpleTable.Schema.TableSchema
   alias PhxSimpleTableWeb.TableLive.CustomSchemas.Filtering
@@ -22,7 +22,7 @@ defmodule PhxSimpleTableWeb.TableLive.Components.FilterComponent do
             field={@form[:gender]}
             type="select"
             label="Gender"
-            options={["Male", "Female", "Others"]}
+            options={["","Male", "Female", "Others"]}
           /> <.input field={@form[:weight]} type="number" label="Weight" />
         </div>
 

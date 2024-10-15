@@ -1,10 +1,18 @@
 <h1 class=" text-4xl">Table Views with Phoenix LiveView</h1>
  
 <.live_component
-module={PhxSimpleTableWeb.TableLive.Components.FilterComponent}
+module={PhxSimpleTableWeb.TableLive.Components.Filter}
 id="filter"
 filter={@filter}
 ></.live_component>
+
+<.live_component
+module={PhxSimpleTableWeb.TableLive.Components.Pagination}
+id="pagination-form"
+paginate={@paginate}
+></.live_component>
+
+
  
 <div class="relative overflow-x-auto">
   <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -12,7 +20,7 @@ filter={@filter}
       <tr>
         <th scope="col" class="px-6 py-3">
           <.live_component
-            module={PhxSimpleTableWeb.TableLive.Components.SortingComponent}
+            module={PhxSimpleTableWeb.TableLive.Components.Sorting}
             id="sorting-id"
             key={:id}
             sorting={@sorting}
@@ -22,7 +30,7 @@ filter={@filter}
         
         <th scope="col" class="px-6 py-3">
           <.live_component
-            module={PhxSimpleTableWeb.TableLive.Components.SortingComponent}
+            module={PhxSimpleTableWeb.TableLive.Components.Sorting}
             id="sorting-name"
             key={:name}
             sorting={@sorting}
@@ -32,7 +40,7 @@ filter={@filter}
         
         <th scope="col" class="px-6 py-3">
            <.live_component
-            module={PhxSimpleTableWeb.TableLive.Components.SortingComponent}
+            module={PhxSimpleTableWeb.TableLive.Components.Sorting}
             id="sorting-weight"
             key={:weight}
             sorting={@sorting}
@@ -42,7 +50,7 @@ filter={@filter}
         
         <th scope="col" class="px-6 py-3">
           <.live_component
-            module={PhxSimpleTableWeb.TableLive.Components.SortingComponent}
+            module={PhxSimpleTableWeb.TableLive.Components.Sorting}
             id="sorting-gender"
             key={:gender}
             sorting={@sorting}
@@ -78,4 +86,5 @@ filter={@filter}
     </tbody>
   </table>
 </div>
+
 
