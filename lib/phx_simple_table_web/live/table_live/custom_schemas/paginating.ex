@@ -8,7 +8,7 @@ defmodule PhxSimpleTableWeb.TableLive.CustomSchemas.Paginating do
   }
   @default_values %{
     page: 1,
-    page_size: 20,
+    page_size: 10,
     total_count: 0
   }
   def parse(params, values \\ @default_values) do
