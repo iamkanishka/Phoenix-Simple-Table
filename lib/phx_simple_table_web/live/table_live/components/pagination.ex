@@ -7,67 +7,37 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
   def render(assigns) do
     ~H"""
     <div class="flex  justify-end ">
-
       <div class="mt-2 mx-5">
         <nav>
           <ul class="inline-flex  text-sm">
-
-          <%= for {page_number, current_page?} <- pages(@paginating) do %>
-
-            <li>
-              <a
-                href="#"
-
-                class={if current_page?, do: "flex items-center justify-center px-3 h-10 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white" ,else: "flex items-center justify-center px-3 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"}
-
-              >
-              <%= page_number %>
-              </a>
-            </li>
+            <%= for {page_number, current_page?} <- pages(@paginating) do %>
+              <li phx-click="show_page" phx-value-page={page_number}>
+                <a
+                  href="javascript:void(0)"
+                  class={
+                    if current_page?,
+                      do:
+                        "flex items-center justify-center px-3 h-10 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white",
+                      else:
+                        "flex items-center justify-center px-3 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  }
+                >
+                  <%= page_number %>
+                </a>
+              </li>
             <% end %>
-
-            <%!-- <li>
-              <a
-                href="#"
-                class="flex items-center justify-center px-3 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                2
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="#"
-                aria-current="page"
-                class="flex items-center justify-center px-3 h-10 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-              >
-                3
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="#"
-                class="flex items-center justify-center px-3 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                4
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="#"
-                class="flex items-center justify-center px-3 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                5
-              </a>
-            </li> --%>
           </ul>
         </nav>
       </div>
 
       <div>
-        <.simple_form for={@paginate_form} id="pagination-form" class="w-20" phx-target={@myself}   phx-change="set_page_size">
+        <.simple_form
+          for={@paginate_form}
+          id="pagination-form"
+          class="w-20"
+          phx-target={@myself}
+          phx-change="set_page_size"
+        >
           <.input
             type="select"
             field={@paginate_form[:page_size]}
@@ -76,8 +46,6 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
           />
         </.simple_form>
       </div>
-
-
     </div>
     """
   end
@@ -94,9 +62,7 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
     {:ok, socket}
   end
 
-  # def pages(%{page_size: page_size, page: current_page, total_count: total_count}) do
   def pages(%{page_size: page_size, page: current_page, total_count: total_count}) do
-
     page_count = ceil(total_count / page_size)
 
     for page_number <- 1..page_count//1 do
@@ -104,18 +70,19 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
       {page_number, current_page?}
     end
   end
+  def handle_event("show_page", unsigned_params, socket) do
+   IO.inspect(unsigned_params, label: "unsigned_params")
+   {:noreply, socket}
+  end
+
 
   @impl true
-  def handle_event("show_page", params, socket) do
+  def handle_event("set_page_size", %{"pagination_schema" => params}, socket) do
     parse_params(params, socket)
   end
 
-  @impl true
-  def handle_event("set_page_size", %{"pagination_schema"=> params}, socket) do
-      parse_params(params, socket)
-   end
-
   defp parse_params(params, socket) do
+    IO.inspect(params)
     %{paginating: paginating} = socket.assigns
 
     case Paginating.parse(params, paginating) do
