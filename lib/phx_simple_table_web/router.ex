@@ -19,6 +19,8 @@ defmodule PhxSimpleTableWeb.Router do
 
     # get "/", PageController, :home
     live "/", TableLive.Show, :show
+    live "/Infinity", InfinityTableLive.Show, :show
+
   end
 
   # Other scopes may use custom stacks.

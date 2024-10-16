@@ -91,7 +91,7 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
     IO.inspect(total_count, label: "totalcount")
 
     socket
-    |> assign(:table_list, table_data)
+    |> stream(:table_list, table_data)
     |> assign_total_count(total_count)
   end
 
