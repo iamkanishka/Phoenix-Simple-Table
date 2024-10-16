@@ -37,6 +37,13 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
     with {:ok, sorting_opts} <- Sorting.parse(params),
          {:ok, filtering_opts} <- Filtering.parse(params),
          {:ok, paginating_opts} <- Paginating.parse(params) do
+
+          IO.inspect(sorting_opts, label: "sorting_opts")
+          IO.inspect(filtering_opts, label: "filtering_opts")
+          IO.inspect(paginating_opts, label: "paginating_opts")
+
+
+
       socket
       |> assign_sorting(sorting_opts)
       |> assign_filtering(filtering_opts)
@@ -46,12 +53,14 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
         socket
         |> assign_sorting()
         |> assign_filtering()
+        |> assign_pagination()
+
     end
   end
 
   defp assign_pagination(socket, overrides \\ %{}) do
     paginate_form_opts = Map.merge(%PaginationSchema{}, overrides)
-    paginating_opts = Map.merge(Filtering.default_values(), overrides)
+    paginating_opts = Map.merge(Paginating.default_values(), overrides)
 
     socket
     |> assign(:paginate, paginate_form_opts)
@@ -74,9 +83,12 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
 
   defp assign_table_list(socket) do
     params = merge_and_sanitize_params(socket)
+    IO.inspect(params, label: "merge_and_sanitize_params")
 
     %{table_data: table_data, total_count: total_count} =
       TableQuery.list_table_data_with_total_count(params)
+
+    IO.inspect(total_count, label: "totalcount")
 
     socket
     |> assign(:table_list, table_data)
@@ -84,25 +96,41 @@ defmodule PhxSimpleTableWeb.TableLive.Show do
   end
 
   # One way to update  a specfic key in socket
-  # defp assign_total_count(socket, total_count) do
-  #   update(socket, :pagination, fn pagination -> %{pagination | total_count: total_count} end)
-  # end
-
   defp assign_total_count(socket, total_count) do
-    assign(socket, :pagination, total_count)
+    update(socket, :paginating, fn pagination -> %{pagination | total_count: total_count} end)
   end
 
+
+
   defp merge_and_sanitize_params(socket, overrides \\ %{}) do
+
     %{sorting: sorting, filtering: filtering, paginating: paginating} = socket.assigns
 
+    IO.inspect(sorting, label: "sorting")
+    IO.inspect(filtering, label: "filtering")
+    IO.inspect(paginating, label: "paginating")
+
+
+    IO.inspect(overrides, label: "merge_and_sanitize_params overrides")
+
+    mrpoverrides = maybe_reset_pagination(overrides)
+    IO.inspect(mrpoverrides, label: " mrpoverridesmaybe_reset_pagination overrides")
     %{}
     |> Map.merge(sorting)
     |> Map.merge(filtering)
     |> Map.merge(paginating)
-    |> Map.merge(overrides)
-    |> Map.merge(overrides)
+    |> Map.merge(mrpoverrides)
     |> Map.drop([:total_count])
     |> Enum.reject(fn {_key, value} -> is_nil(value) end)
     |> Map.new()
+    |> IO.inspect(label: "From  merge_and_sanitize_params")
+  end
+
+  defp maybe_reset_pagination(overrides) do
+    if Filtering.contains_filter_values?(overrides) do
+      Map.put(overrides, :page, 1)
+    else
+      overrides
+    end
   end
 end

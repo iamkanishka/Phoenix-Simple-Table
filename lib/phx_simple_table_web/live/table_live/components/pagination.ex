@@ -17,7 +17,9 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
             <li>
               <a
                 href="#"
-                class="flex items-center justify-center px-3 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+
+                class={if current_page?, do: "flex items-center justify-center px-3 h-10 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white" ,else: "flex items-center justify-center px-3 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"}
+
               >
               <%= page_number %>
               </a>
@@ -65,7 +67,7 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
       </div>
 
       <div>
-        <.simple_form for={@paginate_form} id="pagination-form" class="w-20" phx-target={@myself}>
+        <.simple_form for={@paginate_form} id="pagination-form" class="w-20" phx-target={@myself}   phx-change="set_page_size">
           <.input
             type="select"
             field={@paginate_form[:page_size]}
@@ -92,7 +94,9 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
     {:ok, socket}
   end
 
+  # def pages(%{page_size: page_size, page: current_page, total_count: total_count}) do
   def pages(%{page_size: page_size, page: current_page, total_count: total_count}) do
+
     page_count = ceil(total_count / page_size)
 
     for page_number <- 1..page_count//1 do
@@ -107,14 +111,14 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
   end
 
   @impl true
-  def handle_event("set_page_size", %{"page_size" => params}, socket) do
-    parse_params(params, socket)
-  end
+  def handle_event("set_page_size", %{"pagination_schema"=> params}, socket) do
+      parse_params(params, socket)
+   end
 
   defp parse_params(params, socket) do
-    %{pagination: pagination} = socket.assigns
+    %{paginating: paginating} = socket.assigns
 
-    case Paginating.parse(params, pagination) do
+    case Paginating.parse(params, paginating) do
       {:ok, opts} ->
         send(self(), {:update, opts})
         {:noreply, socket}
