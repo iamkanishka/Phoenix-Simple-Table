@@ -1,5 +1,7 @@
 <h1 class="text-5xl">Table view with infinity scroll</h1>
 
+<div id="myDiv" phx-hook="PingPongHook" />
+
 <div class="relative overflow-x-auto">
   <table
     class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
@@ -17,6 +19,7 @@
         <th scope="col" class="px-6 py-3">gender</th>
       </tr>
     </thead>
+
 
     <tbody id="infinitytabledata" phx-update="stream" phx-hook="InfinityScroll">
       <tr

@@ -11,7 +11,7 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
         <nav>
           <ul class="inline-flex  text-sm">
             <%= for {page_number, current_page?} <- pages(@paginating) do %>
-              <li phx-click="show_page" phx-value-page={page_number}>
+              <li phx-click="show_page" phx-target={@myself} phx-value-page={page_number}>
                 <a
                   href="javascript:void(0)"
                   class={
@@ -70,11 +70,11 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
       {page_number, current_page?}
     end
   end
-  def handle_event("show_page", unsigned_params, socket) do
-   IO.inspect(unsigned_params, label: "unsigned_params")
-   {:noreply, socket}
-  end
 
+  @impl true
+  def handle_event("show_page", params, socket) do
+    parse_params(params, socket)
+  end
 
   @impl true
   def handle_event("set_page_size", %{"pagination_schema" => params}, socket) do
