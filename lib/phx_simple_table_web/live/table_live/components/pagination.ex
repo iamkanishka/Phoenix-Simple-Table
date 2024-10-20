@@ -1,4 +1,5 @@
 defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
+  require Logger
   alias PhxSimpleTableWeb.TableLive.CustomSchemas.Paginating
   alias PhxSimpleTable.Schema.PaginationSchema
   use PhxSimpleTableWeb, :live_component
@@ -7,7 +8,7 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
   def render(assigns) do
     ~H"""
     <div class="flex  justify-end ">
-      <div class="mt-2 mx-5">
+      <%!-- <div class="mt-2 mx-5">
         <nav>
           <ul class="inline-flex  text-sm">
             <%= for {page_number, current_page?} <- pages(@paginating) do %>
@@ -28,6 +29,17 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
             <% end %>
           </ul>
         </nav>
+      </div> --%>
+      <div>
+        <.simple_form
+          for={@paginate_form}
+          id="pagination-form"
+          class="w-20"
+          phx-target={@myself}
+          phx-change="show_page"
+        >
+          <.input type="select" field={@paginate_form[:page]} label="" options={pages(@paginating)} />
+        </.simple_form>
       </div>
 
       <div>
@@ -67,18 +79,21 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
 
     for page_number <- 1..page_count//1 do
       current_page? = page_number == current_page
-      {page_number, current_page?}
+      # {page_number, current_page?}
+
+      page_number
     end
   end
 
   @impl true
-  def handle_event("show_page", params, socket) do
+  def handle_event("show_page", %{"pagination_schema" => params}, socket) do
     parse_params(params, socket)
   end
 
   @impl true
   def handle_event("set_page_size", %{"pagination_schema" => params}, socket) do
-    parse_params(params, socket)
+    new_params = Map.put(params, "page", 1)
+    parse_params(new_params, socket)
   end
 
   defp parse_params(params, socket) do
