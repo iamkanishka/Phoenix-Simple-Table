@@ -80,16 +80,4 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Filter do
     assign(socket, :form, to_form(changeset))
   end
 
-  #   @impl true
-  #   def handle_event("validate", %{"filter_params" => table_params}, socket) do
-  #     # changeset =
-  #     #   socket.assigns.product
-  #     #   |> Store.change_product(product_params)
-  #     #   |> Map.put(:action, :validate)
-  #     #  {:noreply, assign_form(socket, changeset)}
-
-  #  IO.inspect(table_params, label: "table_params")
-
-  #     {:noreply, socket}
-  #   end
 end
