@@ -7,7 +7,7 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="flex  justify-end ">
+    <div class="flex  justify-end  gap-3">
       <%!-- <div class="mt-2 mx-5">
         <nav>
           <ul class="inline-flex  text-sm">
@@ -30,7 +30,37 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
           </ul>
         </nav>
       </div> --%>
-      <div>
+
+      <div class="flex items-center gap-3">
+
+      <div class="text-sm font-medium text-black ">
+         Total Records:   <%= @paginating[:total_count] %>
+        </div>
+
+        <a
+          href="javascript:void(0)"
+          class="flex items-center justify-center px-4 h-9 text-sm font-medium text-black bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          phx-target={@myself}
+          phx-click="traverse-previous"
+        >
+          Previous
+        </a>
+
+        <div class="text-sm font-medium text-black ">
+          <%= @paginating[:page] %> / <%= length(pages(@paginating)) %>
+        </div>
+
+        <a
+          href="javascript:void(0)"
+          class="flex items-center justify-center px-4 h-9 ms-3 text-sm font-medium text-black bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          phx-target={@myself}
+          phx-click="traverse-next"
+        >
+          Next
+        </a>
+      </div>
+
+      <div class="mb-1">
         <.simple_form
           for={@paginate_form}
           id="pagination-form"
@@ -42,7 +72,7 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
         </.simple_form>
       </div>
 
-      <div>
+      <div class="mb-1">
         <.simple_form
           for={@paginate_form}
           id="pagination-form"
@@ -82,6 +112,36 @@ defmodule PhxSimpleTableWeb.TableLive.Components.Pagination do
       # {page_number, current_page?}
 
       page_number
+    end
+  end
+
+  def handle_event(
+        "traverse-previous",
+        _params,
+        socket
+      ) do
+    pagination_params = socket.assigns.paginating
+    IO.inspect(pagination_params, label: "pagination_params")
+
+    if pagination_params[:page] != 0 and pagination_params[:page] >= 1 do
+      parse_params(%{page: pagination_params[:page] - 1}, socket)
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event(
+        "traverse-next",
+        _params,
+        socket
+      ) do
+    pagination_params = socket.assigns.paginating
+    pages_length = length(pages(pagination_params))
+
+    if pagination_params[:page] <= pages_length and pagination_params[:page] >= 1 do
+      parse_params(%{page: pagination_params[:page] + 1}, socket)
+    else
+      {:noreply, socket}
     end
   end
 
